@@ -33,6 +33,7 @@ public class MeetingServiceImpl implements MeetingService {
                 )).build();
     }
 
+    @Override
     public Map<String, Object> generateMeetingSession(MeetingRequest request){
 
         CreateMeetingRequest meetingRequest = CreateMeetingRequest.builder()
@@ -83,16 +84,18 @@ public class MeetingServiceImpl implements MeetingService {
         return of("JoinInfo", joinResponse);
     }
 
-    public AttendeeInfoResponse getAttendeeInfo(String meetingTitle, String attendeeId){
+    @Override
+    public Map<String, Object> getAttendeeInfo(String meetingTitle, String attendeeId){
 
         if(attendees.containsKey(meetingTitle)){
 
             Map<String, Object> attendee = attendees.get(meetingTitle);
 
-            return AttendeeInfoResponse.builder()
+
+            return of("AttendeeInfo",AttendeeInfoResponse.builder()
                     .AttendeeId(attendee.get("attendeeId").toString())
                     .Name(attendee.get("attendeeName").toString())
-                    .build();
+                    .build());
         }
 
         return null;
