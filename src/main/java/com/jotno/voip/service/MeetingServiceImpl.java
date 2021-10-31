@@ -14,6 +14,7 @@ import software.amazon.awssdk.services.chime.ChimeClient;
 import software.amazon.awssdk.services.chime.model.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import static java.util.Map.of;
 
 @Slf4j
@@ -31,10 +32,13 @@ public class MeetingServiceImpl implements MeetingService {
                         Constant.ACCESS_KEY_ID,
                         Constant.SECRET_ACCESS_KEY
                 )).build();
+        log.info("MeetingServiceImpl MeetingServiceImpl(): ChimeClient initiated");
     }
 
     @Override
     public Map<String, Object> generateMeetingSession(MeetingRequest request){
+
+        log.info("MeetingServiceImpl generateMeetingSession(): Entry");
 
         CreateMeetingRequest meetingRequest = CreateMeetingRequest.builder()
                 .clientRequestToken(request.getMeetingId())
@@ -61,13 +65,12 @@ public class MeetingServiceImpl implements MeetingService {
 
         CreateAttendeeRequest attendeeRequest = CreateAttendeeRequest.builder()
                 .meetingId(meeting.meetingId())
-                .externalUserId(request.getUserId())
+                .externalUserId(UUID.randomUUID().toString())
                 .build();
 
         Attendee attendee = chimeClient.createAttendee(attendeeRequest).attendee();
 
-        // Saving Attendee Info for later use
-        attendees.put(request.getMeetingId(), of("attendeeId",attendee.attendeeId(), "attendeeName", request.getUserId()));
+        attendees.put(request.getMeetingId(), of("attendeeId",attendee.attendeeId(), "attendeeName", request.getAttendeeName()));
 
         AttendeeResponse attendeeData = AttendeeResponse.builder()
                 .AttendeeId(attendee.attendeeId())
@@ -81,22 +84,29 @@ public class MeetingServiceImpl implements MeetingService {
                 .Attendee(attendeeData)
                 .build();
 
+        log.info("MeetingServiceImpl generateMeetingSession(): Exit");
+
         return of("JoinInfo", joinResponse);
     }
 
     @Override
     public Map<String, Object> getAttendeeInfo(String meetingTitle, String attendeeId){
 
+        log.info("MeetingServiceImpl getAttendeeInfo(): Entry");
+
         if(attendees.containsKey(meetingTitle)){
 
             Map<String, Object> attendee = attendees.get(meetingTitle);
 
+            log.info("MeetingServiceImpl getAttendeeInfo(): Success- Exit");
 
-            return of("AttendeeInfo",AttendeeInfoResponse.builder()
+            return of("AttendeeInfo", AttendeeInfoResponse.builder()
                     .AttendeeId(attendee.get("attendeeId").toString())
                     .Name(attendee.get("attendeeName").toString())
                     .build());
         }
+
+        log.info("MeetingServiceImpl getAttendeeInfo(): Failure- Exit");
 
         return null;
     }
