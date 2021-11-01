@@ -7,12 +7,9 @@ import lombok.*;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @ToString
 public class MeetingRequest {
 
     private String meetingId;
     private String attendeeName;
-    @Builder.Default
-    private String region = "us-east-1";
 }

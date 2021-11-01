@@ -32,13 +32,13 @@ public class MeetingServiceImpl implements MeetingService {
                         Constant.ACCESS_KEY_ID,
                         Constant.SECRET_ACCESS_KEY
                 )).build();
-        log.info("MeetingServiceImpl MeetingServiceImpl(): ChimeClient initiated");
+        log.info("MeetingService Constructor: ChimeClient initiated");
     }
 
     @Override
     public Map<String, Object> generateMeetingSession(MeetingRequest request){
 
-        log.info("MeetingServiceImpl generateMeetingSession(): Entry");
+        log.info("MeetingService generateMeetingSession(): Entry");
 
         CreateMeetingRequest meetingRequest = CreateMeetingRequest.builder()
                 .clientRequestToken(request.getMeetingId())
@@ -84,7 +84,7 @@ public class MeetingServiceImpl implements MeetingService {
                 .Attendee(attendeeData)
                 .build();
 
-        log.info("MeetingServiceImpl generateMeetingSession(): Exit");
+        log.info("MeetingService generateMeetingSession(): Success- Exit");
 
         return of("JoinInfo", joinResponse);
     }
@@ -92,13 +92,13 @@ public class MeetingServiceImpl implements MeetingService {
     @Override
     public Map<String, Object> getAttendeeInfo(String meetingTitle, String attendeeId){
 
-        log.info("MeetingServiceImpl getAttendeeInfo(): Entry");
+        log.info("MeetingService getAttendeeInfo(): Entry");
 
         if(attendees.containsKey(meetingTitle)){
 
             Map<String, Object> attendee = attendees.get(meetingTitle);
 
-            log.info("MeetingServiceImpl getAttendeeInfo(): Success- Exit");
+            log.info("MeetingService getAttendeeInfo(): Success- Exit");
 
             return of("AttendeeInfo", AttendeeInfoResponse.builder()
                     .AttendeeId(attendee.get("attendeeId").toString())
@@ -106,7 +106,7 @@ public class MeetingServiceImpl implements MeetingService {
                     .build());
         }
 
-        log.info("MeetingServiceImpl getAttendeeInfo(): Failure- Exit");
+        log.info("MeetingService getAttendeeInfo(): Failure- Exit");
 
         return null;
     }
