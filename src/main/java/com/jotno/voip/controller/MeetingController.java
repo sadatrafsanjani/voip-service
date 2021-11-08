@@ -1,6 +1,7 @@
 package com.jotno.voip.controller;
 
 import com.jotno.voip.dto.request.MeetingRequest;
+import com.jotno.voip.service.FirebaseService;
 import com.jotno.voip.service.MeetingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,13 @@ import java.util.Map;
 public class MeetingController {
 
     private MeetingService meetingService;
+    private FirebaseService firebaseService;
 
     @Autowired
-    public MeetingController(MeetingService meetingService) {
+    public MeetingController(MeetingService meetingService,
+                             FirebaseService firebaseService) {
         this.meetingService = meetingService;
+        this.firebaseService = firebaseService;
     }
 
     @PostMapping("/join")

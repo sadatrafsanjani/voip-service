@@ -22,15 +22,15 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.6'
+	implementation 'org.springframework.boot:spring-boot-starter-validation:2.5.6'
 	implementation 'junit:junit:4.13.1'
-	implementation 'junit:junit:4.13.1'
-	compileOnly 'org.projectlombok:lombok'
+	implementation 'software.amazon.awssdk:chime:2.11.9'
+	implementation 'com.google.firebase:firebase-admin:8.1.0'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation 'software.amazon.awssdk:chime:2.11.9'
 }
 
 test {

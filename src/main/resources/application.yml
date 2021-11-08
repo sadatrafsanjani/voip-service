@@ -1,3 +1,6 @@
 spring:
   application:
     name: voip-service
+
+server:
+  port: 8080
