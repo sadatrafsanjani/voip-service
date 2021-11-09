@@ -30,13 +30,21 @@ public class MeetingController {
         log.info("MeetingController joinMeeting(): Entry");
         log.info("MeetingController joinMeeting(): MeetingRequest- " + request);
 
-        Map<String, Object> response = meetingService.generateMeetingSession(request);
+        MeetingRequest remoteRequest = MeetingRequest.builder()
+                .meetingId(request.getMeetingId())
+                .attendeeName("Remote user Name")
+                .build();
 
-        if(response != null){
+        Map<String, Object> selfResponse = meetingService.generateMeetingSession(request);
+        Map<String, Object> remoteResponse = meetingService.generateMeetingSession(remoteRequest);
+
+        firebaseService.sendCallNotification(remoteResponse);
+
+        if(selfResponse != null){
 
             log.info("MeetingController joinMeeting(): Success- Exit");
 
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(selfResponse);
         }
 
         log.info("MeetingController joinMeeting(): Failure- Exit");

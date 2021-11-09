@@ -8,6 +8,7 @@ import com.jotno.voip.dto.response.MediaPlacementResponse;
 import com.jotno.voip.service.MeetingService;
 import com.jotno.voip.utility.Constant;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.regions.Region;

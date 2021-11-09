@@ -10,6 +10,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class JoinResponse {
 
     @JsonProperty("Title")

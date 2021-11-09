@@ -26,6 +26,7 @@ dependencies {
 	implementation 'junit:junit:4.13.1'
 	implementation 'software.amazon.awssdk:chime:2.11.9'
 	implementation 'com.google.firebase:firebase-admin:8.1.0'
+	implementation 'org.json:json:20210307'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	compileOnly 'org.projectlombok:lombok'

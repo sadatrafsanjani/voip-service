@@ -1,8 +1,8 @@
 package com.jotno.voip.service;
 
-import com.jotno.voip.dto.response.Payload;
+import java.util.Map;
 
 public interface FirebaseService {
 
-    String sendCallNotification(Payload payload);
+    void sendCallNotification(Map<String, Object> payload);
 }
