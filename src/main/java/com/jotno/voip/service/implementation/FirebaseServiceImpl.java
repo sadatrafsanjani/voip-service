@@ -28,8 +28,8 @@ public class FirebaseServiceImpl implements FirebaseService {
         httpHeaders.set("Content-Type", "application/json");
 
         Map<String,String> notification = new HashMap<>();
-        notification.put("title", "This is the title");
-        notification.put("body", "This is the body");
+        notification.put("title", "Incoming call");
+        notification.put("body", "Doctor is calling...");
 
         JSONObject json = new JSONObject();
         json.put("notification", notification);
