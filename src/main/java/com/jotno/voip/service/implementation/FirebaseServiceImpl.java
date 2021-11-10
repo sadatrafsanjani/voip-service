@@ -34,12 +34,17 @@ public class FirebaseServiceImpl implements FirebaseService {
         JSONObject json = new JSONObject();
         json.put("notification", notification);
         json.put("data", new JSONObject(new Gson().toJson(payload)));
-        json.put("to", Constant.FIREBASE_TOKEN_ID);
+        json.put("to", Constant.DEVICE_TOKEN_ID);
 
         HttpEntity<String> httpEntity = new HttpEntity<>(json.toString(), httpHeaders);
         String response = restTemplate.postForObject(Constant.FIREBASE_URL, httpEntity, String.class);
 
-        log.info("FirebaseService sendCallNotification(): Response- " + response);
-        log.info("FirebaseService sendCallNotification(): Exit");
+        if(response != null){
+
+            log.info("FirebaseService sendCallNotification(): Response- " + response);
+            log.info("FirebaseService sendCallNotification(): Exit- Success");
+        }
+
+        log.info("FirebaseService sendCallNotification(): Exit- Failure");
     }
 }

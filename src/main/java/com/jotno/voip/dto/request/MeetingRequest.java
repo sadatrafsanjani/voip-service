@@ -13,4 +13,5 @@ public class MeetingRequest {
 
     private String meetingId;
     private String attendeeName;
+    private String client;
 }

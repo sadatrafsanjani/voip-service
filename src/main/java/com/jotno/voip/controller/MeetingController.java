@@ -24,11 +24,11 @@ public class MeetingController {
         this.firebaseService = firebaseService;
     }
 
-    @PostMapping("/join")
-    public ResponseEntity<?> joinMeeting(@RequestBody MeetingRequest request) {
+    @PostMapping("/call")
+    public ResponseEntity<?> initiateCall(@RequestBody MeetingRequest request) {
 
-        log.info("MeetingController joinMeeting(): Entry");
-        log.info("MeetingController joinMeeting(): MeetingRequest- " + request);
+        log.info("MeetingController initiateCall(): Entry");
+        log.info("MeetingController initiateCall(): MeetingRequest- " + request);
 
         MeetingRequest remoteRequest = MeetingRequest.builder()
                 .meetingId(request.getMeetingId())
@@ -42,12 +42,12 @@ public class MeetingController {
 
         if(selfResponse != null){
 
-            log.info("MeetingController joinMeeting(): Success- Exit");
+            log.info("MeetingController initiateCall(): Success- Exit");
 
             return ResponseEntity.ok(selfResponse);
         }
 
-        log.info("MeetingController joinMeeting(): Failure- Exit");
+        log.info("MeetingController initiateCall(): Failure- Exit");
 
         return ResponseEntity.badRequest().build();
     }
