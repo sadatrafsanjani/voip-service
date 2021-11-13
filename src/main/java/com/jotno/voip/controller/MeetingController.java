@@ -25,26 +25,25 @@ public class MeetingController {
     }
 
     @PostMapping("/call")
-    public ResponseEntity<?> initiateCall(@RequestBody MeetingRequest request) {
+    public ResponseEntity<?> initiateCall(@RequestBody MeetingRequest callerRequest) {
 
         log.info("MeetingController initiateCall(): Entry");
-        log.info("MeetingController initiateCall(): MeetingRequest- " + request);
+        log.info("MeetingController initiateCall(): MeetingRequest- " + callerRequest);
 
-        MeetingRequest remoteRequest = MeetingRequest.builder()
-                .meetingId(request.getMeetingId())
-                .attendeeName("Remote user Name")
+        MeetingRequest calleeRequest = MeetingRequest.builder()
+                .meetingId(callerRequest.getMeetingId())
+                .attendeeName("Remote User")
                 .build();
 
-        Map<String, Object> selfResponse = meetingService.generateMeetingSession(request);
-        Map<String, Object> remoteResponse = meetingService.generateMeetingSession(remoteRequest);
+        Map<String, Object> callerResponse = meetingService.generateMeetingSession(callerRequest);
+        Map<String, Object> calleeResponse = meetingService.generateMeetingSession(calleeRequest);
 
-        firebaseService.sendCallNotification(remoteResponse);
-
-        if(selfResponse != null){
+        if(callerResponse != null){
 
             log.info("MeetingController initiateCall(): Success- Exit");
+            firebaseService.sendCallNotification(calleeResponse, callerRequest.getClient());
 
-            return ResponseEntity.ok(selfResponse);
+            return ResponseEntity.ok(callerResponse);
         }
 
         log.info("MeetingController initiateCall(): Failure- Exit");

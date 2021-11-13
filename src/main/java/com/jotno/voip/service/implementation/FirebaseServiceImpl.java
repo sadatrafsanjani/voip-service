@@ -17,7 +17,7 @@ import java.util.Map;
 public class FirebaseServiceImpl implements FirebaseService {
 
     @Override
-    public void sendCallNotification(Map<String, Object> payload)  {
+    public void sendCallNotification(Map<String, Object> payload, String client)  {
 
         log.info("FirebaseService sendCallNotification(): Entry");
         log.info("FirebaseService sendCallNotification(): Payload- " + payload);
@@ -34,7 +34,13 @@ public class FirebaseServiceImpl implements FirebaseService {
         JSONObject json = new JSONObject();
         json.put("notification", notification);
         json.put("data", new JSONObject(new Gson().toJson(payload)));
-        json.put("to", Constant.DEVICE_TOKEN_ID);
+
+        if(client.equalsIgnoreCase("web")){
+            json.put("to", Constant.DEVICE_TOKEN_ID_ANDROID);
+        }
+        else if (client.equalsIgnoreCase("android")){
+            json.put("to", Constant.DEVICE_TOKEN_ID_WEB);
+        }
 
         HttpEntity<String> httpEntity = new HttpEntity<>(json.toString(), httpHeaders);
         String response = restTemplate.postForObject(Constant.FIREBASE_URL, httpEntity, String.class);
