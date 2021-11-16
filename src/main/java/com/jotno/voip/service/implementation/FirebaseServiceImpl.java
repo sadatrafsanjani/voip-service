@@ -20,20 +20,20 @@ public class FirebaseServiceImpl implements FirebaseService {
     public void sendCallNotification(Map<String, Object> payload, String client)  {
 
         log.info("FirebaseService sendCallNotification(): Entry");
-        log.info("FirebaseService sendCallNotification(): Payload- " + payload);
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Authorization", "key=" + Constant.FIREBASE_AUTHORIZATION_KEY);
         httpHeaders.set("Content-Type", "application/json");
 
-        Map<String,String> notification = new HashMap<>();
-        notification.put("title", "Incoming call");
-        notification.put("body", "Doctor is calling...");
+        Map<String,Object> body = new HashMap<>();
+        body.put("title", "Caller Name");
+        body.put("body", "Incoming call");
+        body.put("data", payload);
 
         JSONObject json = new JSONObject();
-        json.put("notification", notification);
-        json.put("data", new JSONObject(new Gson().toJson(payload)));
+        json.put("priority", "high");
+        json.put("data", new JSONObject(new Gson().toJson(body)));
 
         if(client.equalsIgnoreCase("web")){
             json.put("to", Constant.DEVICE_TOKEN_ID_ANDROID);
@@ -41,6 +41,8 @@ public class FirebaseServiceImpl implements FirebaseService {
         else if (client.equalsIgnoreCase("android")){
             json.put("to", Constant.DEVICE_TOKEN_ID_WEB);
         }
+
+        log.info(json.toString());
 
         HttpEntity<String> httpEntity = new HttpEntity<>(json.toString(), httpHeaders);
         String response = restTemplate.postForObject(Constant.FIREBASE_URL, httpEntity, String.class);
@@ -50,7 +52,9 @@ public class FirebaseServiceImpl implements FirebaseService {
             log.info("FirebaseService sendCallNotification(): Response- " + response);
             log.info("FirebaseService sendCallNotification(): Exit- Success");
         }
+        else{
 
-        log.info("FirebaseService sendCallNotification(): Exit- Failure");
+            log.info("FirebaseService sendCallNotification(): Exit- Failure");
+        }
     }
 }
