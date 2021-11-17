@@ -9,9 +9,9 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Builder
-public class MeetingRequest {
+public class CallRequest {
 
     private String meetingId;
     private String attendeeName;
-    private String client;
+    private String phoneNo;
 }

@@ -1,13 +1,15 @@
 package com.jotno.voip.controller;
 
-import com.jotno.voip.dto.request.MeetingRequest;
+import com.jotno.voip.dto.request.CallRequest;
 import com.jotno.voip.service.FirebaseService;
 import com.jotno.voip.service.MeetingService;
+import com.jotno.voip.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -16,23 +18,25 @@ public class MeetingController {
 
     private MeetingService meetingService;
     private FirebaseService firebaseService;
+    private UserService userService;
 
     @Autowired
     public MeetingController(MeetingService meetingService,
-                             FirebaseService firebaseService) {
+                             FirebaseService firebaseService,
+                             UserService userService) {
         this.meetingService = meetingService;
         this.firebaseService = firebaseService;
+        this.userService = userService;
     }
 
     @PostMapping("/call")
-    public ResponseEntity<?> initiateCall(@RequestBody MeetingRequest callerRequest) {
+    public ResponseEntity<?> initiateCall(@RequestBody CallRequest callerRequest) {
 
-        log.info("MeetingController initiateCall(): Entry");
-        log.info("MeetingController initiateCall(): MeetingRequest- " + callerRequest);
+        callerRequest.setMeetingId(UUID.randomUUID().toString());
 
-        MeetingRequest calleeRequest = MeetingRequest.builder()
+        CallRequest calleeRequest = CallRequest.builder()
                 .meetingId(callerRequest.getMeetingId())
-                .attendeeName("Remote User")
+                .attendeeName(userService.getUsernameByPhoneNumber(callerRequest.getPhoneNo()))
                 .build();
 
         Map<String, Object> callerResponse = meetingService.generateMeetingSession(callerRequest);
@@ -40,13 +44,12 @@ public class MeetingController {
 
         if(callerResponse != null){
 
-            log.info("MeetingController initiateCall(): Success- Exit");
-            firebaseService.sendCallNotification(calleeResponse, callerRequest.getClient());
+            userService.getUserDevicesByPhoneNumber(callerRequest.getPhoneNo()).forEach( device -> {
+                firebaseService.sendCallNotification(calleeResponse, device);
+            });
 
             return ResponseEntity.ok(callerResponse);
         }
-
-        log.info("MeetingController initiateCall(): Failure- Exit");
 
         return ResponseEntity.badRequest().build();
     }
@@ -54,19 +57,12 @@ public class MeetingController {
     @GetMapping("/attendee")
     public ResponseEntity<?> getAttendee(@RequestParam("title") String title, @RequestParam("attendee") String attendee) {
 
-        log.info("MeetingController getAttendee(): Entry");
-        log.info("MeetingController getAttendee(): Params- title: " + title + " attendee: " + attendee);
-
         Map<String, Object> response = meetingService.getAttendeeInfo(title, attendee);
 
         if(response != null){
 
-            log.info("MeetingController getAttendee(): Success- Exit");
-
             return ResponseEntity.ok(response);
         }
-
-        log.info("MeetingController getAttendee(): Failure- Exit");
 
         return ResponseEntity.notFound().build();
     }

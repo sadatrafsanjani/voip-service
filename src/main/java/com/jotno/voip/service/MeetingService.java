@@ -1,10 +1,10 @@
 package com.jotno.voip.service;
 
-import com.jotno.voip.dto.request.MeetingRequest;
+import com.jotno.voip.dto.request.CallRequest;
 import java.util.Map;
 
 public interface MeetingService {
 
-    Map<String, Object> generateMeetingSession(MeetingRequest request);
+    Map<String, Object> generateMeetingSession(CallRequest request);
     Map<String, Object> getAttendeeInfo(String title, String attendeeId);
 }

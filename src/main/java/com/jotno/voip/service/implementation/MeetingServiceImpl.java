@@ -1,6 +1,6 @@
 package com.jotno.voip.service.implementation;
 
-import com.jotno.voip.dto.request.MeetingRequest;
+import com.jotno.voip.dto.request.CallRequest;
 import com.jotno.voip.dto.response.AttendeeInfoResponse;
 import com.jotno.voip.dto.response.AttendeeResponse;
 import com.jotno.voip.dto.response.JoinResponse;
@@ -8,7 +8,6 @@ import com.jotno.voip.dto.response.MediaPlacementResponse;
 import com.jotno.voip.service.MeetingService;
 import com.jotno.voip.utility.Constant;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.regions.Region;
@@ -38,7 +37,7 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     @Override
-    public Map<String, Object> generateMeetingSession(MeetingRequest request){
+    public Map<String, Object> generateMeetingSession(CallRequest request){
 
         log.info("MeetingService generateMeetingSession(): Entry");
 
