@@ -45,7 +45,7 @@ public class MeetingController {
         if(callerResponse != null){
 
             userService.getUserDevicesByPhoneNumber(callerRequest.getPhoneNo()).forEach( device -> {
-                firebaseService.sendCallNotification(calleeResponse, device);
+                firebaseService.sendCallNotification(calleeResponse, device, callerRequest.getAttendeeName());
             });
 
             return ResponseEntity.ok(callerResponse);

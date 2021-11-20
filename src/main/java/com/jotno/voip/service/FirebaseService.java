@@ -4,5 +4,5 @@ import java.util.Map;
 
 public interface FirebaseService {
 
-    void sendCallNotification(Map<String, Object> payload, String deviceToken);
+    void sendCallNotification(Map<String, Object> data, String deviceToken, String callerName);
 }

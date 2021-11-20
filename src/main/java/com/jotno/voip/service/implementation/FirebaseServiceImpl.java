@@ -17,7 +17,7 @@ import java.util.Map;
 public class FirebaseServiceImpl implements FirebaseService {
 
     @Override
-    public void sendCallNotification(Map<String, Object> data, String deviceToken)  {
+    public void sendCallNotification(Map<String, Object> data, String deviceToken, String callerName)  {
 
         log.info("FirebaseService sendCallNotification(): Entry");
 
@@ -27,7 +27,7 @@ public class FirebaseServiceImpl implements FirebaseService {
         httpHeaders.set("Content-Type", "application/json");
 
         Map<String,Object> body = new HashMap<>();
-        body.put("title", "Caller Name");
+        body.put("title", callerName);
         body.put("body", "Incoming call");
         body.put("data", data);
 
