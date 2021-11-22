@@ -13,5 +13,7 @@ public class CallRequest {
 
     private String meetingId;
     private String attendeeName;
-    private String phoneNo;
+    private String senderPhoneNo;
+    private String receiverPhoneNo;
+
 }

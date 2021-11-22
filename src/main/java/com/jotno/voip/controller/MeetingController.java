@@ -36,7 +36,7 @@ public class MeetingController {
 
         CallRequest calleeRequest = CallRequest.builder()
                 .meetingId(callerRequest.getMeetingId())
-                .attendeeName(userService.getUsernameByPhoneNumber(callerRequest.getPhoneNo()))
+                .attendeeName(userService.getUsernameByPhoneNumber(callerRequest.getReceiverPhoneNo()))
                 .build();
 
         Map<String, Object> callerResponse = meetingService.generateMeetingSession(callerRequest);
@@ -44,8 +44,8 @@ public class MeetingController {
 
         if(callerResponse != null){
 
-            userService.getUserDevicesByPhoneNumber(callerRequest.getPhoneNo()).forEach( device -> {
-                firebaseService.sendCallNotification(calleeResponse, device, callerRequest.getAttendeeName());
+            userService.getUserDevicesByPhoneNumber(callerRequest.getReceiverPhoneNo()).forEach( device -> {
+                firebaseService.sendCallNotification(calleeResponse, device, callerRequest);
             });
 
             return ResponseEntity.ok(callerResponse);
@@ -65,5 +65,16 @@ public class MeetingController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/reject")
+    public ResponseEntity<?> rejectCall(@RequestParam("callerNo") String callerNo){
+
+
+        userService.getUserDevicesByPhoneNumber(callerNo).forEach( device -> {
+            firebaseService.sendCallRejectNotification(device);
+        });
+
+        return ResponseEntity.ok().build();
     }
 }
