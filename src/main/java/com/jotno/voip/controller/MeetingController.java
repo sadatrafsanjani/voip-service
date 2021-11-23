@@ -67,8 +67,8 @@ public class MeetingController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/reject")
-    public ResponseEntity<?> rejectCall(@RequestParam("receiverNo") String receiverNo){
+    @GetMapping("/reject/{receiverNo}")
+    public ResponseEntity<?> rejectCall(@PathVariable("receiverNo") String receiverNo){
 
         userService.getUserDevicesByPhoneNumber(receiverNo).forEach( device -> {
             firebaseService.sendCallRejectNotification(device);
