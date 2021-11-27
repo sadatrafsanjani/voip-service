@@ -28,12 +28,13 @@ dependencies {
 	implementation 'software.amazon.awssdk:chime:2.11.9'
 	implementation 'com.google.firebase:firebase-admin:8.1.0'
 	implementation 'org.json:json:20210307'
-	implementation 'mysql:mysql-connector-java:8.0.27'
+	//implementation 'mysql:mysql-connector-java:8.0.27'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	runtimeOnly 'com.h2database:h2'
 }
 
 test {

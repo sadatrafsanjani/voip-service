@@ -1,6 +1,13 @@
 spring:
   application:
     name: voip-service
+  jpa:
+    defer-datasource-initialization: true
+  h2:
+    console:
+      enabled: true
 
 server:
   port: 8080
+
+
