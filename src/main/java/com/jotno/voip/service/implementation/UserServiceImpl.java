@@ -2,7 +2,7 @@ package com.jotno.voip.service.implementation;
 
 import com.jotno.voip.model.Device;
 import com.jotno.voip.repository.UserRepository;
-import com.jotno.voip.service.UserService;
+import com.jotno.voip.service.abstraction.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.HashSet;

@@ -1,6 +1,7 @@
 package com.jotno.voip.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.*;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 @ToString
-public class JoinResponse {
+public class JoinInfo {
 
     @JsonProperty("Title")
     private String Title;

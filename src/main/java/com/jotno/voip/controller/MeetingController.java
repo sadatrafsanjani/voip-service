@@ -1,15 +1,13 @@
 package com.jotno.voip.controller;
 
 import com.jotno.voip.dto.request.CallRequest;
-import com.jotno.voip.service.FirebaseService;
-import com.jotno.voip.service.MeetingService;
-import com.jotno.voip.service.UserService;
+import com.jotno.voip.dto.response.AttendeeInfoResponse;
+import com.jotno.voip.dto.response.JoinInfoResponse;
+import com.jotno.voip.service.abstraction.MeetingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -17,38 +15,20 @@ import java.util.UUID;
 public class MeetingController {
 
     private MeetingService meetingService;
-    private FirebaseService firebaseService;
-    private UserService userService;
 
     @Autowired
-    public MeetingController(MeetingService meetingService,
-                             FirebaseService firebaseService,
-                             UserService userService) {
+    public MeetingController(MeetingService meetingService) {
         this.meetingService = meetingService;
-        this.firebaseService = firebaseService;
-        this.userService = userService;
     }
 
     @PostMapping("/call")
     public ResponseEntity<?> initiateCall(@RequestBody CallRequest callerRequest) {
 
-        callerRequest.setMeetingId(UUID.randomUUID().toString());
+        JoinInfoResponse response = meetingService.initiateCall(callerRequest);
 
-        CallRequest calleeRequest = CallRequest.builder()
-                .meetingId(callerRequest.getMeetingId())
-                .attendeeName(userService.getUsernameByPhoneNumber(callerRequest.getReceiverPhoneNo()))
-                .build();
+        if(response != null){
 
-        Map<String, Object> callerResponse = meetingService.generateMeetingSession(callerRequest);
-        Map<String, Object> calleeResponse = meetingService.generateMeetingSession(calleeRequest);
-
-        if(callerResponse != null){
-
-            userService.getUserDevicesByPhoneNumber(callerRequest.getReceiverPhoneNo()).forEach( device -> {
-                firebaseService.sendCallNotification(calleeResponse, device, callerRequest);
-            });
-
-            return ResponseEntity.ok(callerResponse);
+            return ResponseEntity.ok(response);
         }
 
         return ResponseEntity.badRequest().build();
@@ -57,7 +37,7 @@ public class MeetingController {
     @GetMapping("/attendee")
     public ResponseEntity<?> getAttendee(@RequestParam("title") String title, @RequestParam("attendee") String attendee) {
 
-        Map<String, Object> response = meetingService.getAttendeeInfo(title, attendee);
+        AttendeeInfoResponse response = meetingService.getAttendeeInfo(title, attendee);
 
         if(response != null){
 
@@ -70,9 +50,7 @@ public class MeetingController {
     @GetMapping("/reject/{receiverNo}")
     public ResponseEntity<?> rejectCall(@PathVariable("receiverNo") String receiverNo){
 
-        userService.getUserDevicesByPhoneNumber(receiverNo).forEach( device -> {
-            firebaseService.sendCallRejectNotification(device);
-        });
+        meetingService.rejectCall(receiverNo);
 
         return ResponseEntity.ok().build();
     }

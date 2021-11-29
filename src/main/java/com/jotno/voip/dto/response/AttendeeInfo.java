@@ -10,8 +10,10 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class AttendeeInfoResponse {
+public class AttendeeInfo {
 
-    @JsonProperty("AttendeeInfo")
-    private AttendeeInfo attendeeInfo;
+    @JsonProperty("AttendeeId")
+    private String AttendeeId;
+    @JsonProperty("Name")
+    private String Name;
 }

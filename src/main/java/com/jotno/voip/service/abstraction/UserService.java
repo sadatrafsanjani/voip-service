@@ -1,4 +1,4 @@
-package com.jotno.voip.service;
+package com.jotno.voip.service.abstraction;
 
 import java.util.Set;
 

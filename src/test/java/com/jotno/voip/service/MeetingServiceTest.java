@@ -1,5 +1,6 @@
 package com.jotno.voip.service;
 
+import com.jotno.voip.service.abstraction.MeetingService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

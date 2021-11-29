@@ -2,11 +2,11 @@ package com.jotno.voip.service.implementation;
 
 import com.google.gson.Gson;
 import com.jotno.voip.dto.request.CallRequest;
-import com.jotno.voip.service.FirebaseService;
+import com.jotno.voip.dto.response.JoinInfoResponse;
+import com.jotno.voip.service.abstraction.FirebaseService;
 import com.jotno.voip.utility.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.Map;
 public class FirebaseServiceImpl implements FirebaseService {
 
     @Override
-    public void sendCallNotification(Map<String, Object> data, String deviceToken, CallRequest request)  {
+    public void sendCallNotification(JoinInfoResponse data, String deviceToken, CallRequest request)  {
 
         log.info("FirebaseService sendCallNotification(): Entry");
 
@@ -39,8 +39,6 @@ public class FirebaseServiceImpl implements FirebaseService {
         json.put("priority", "high");
         json.put("data", new JSONObject(new Gson().toJson(body)));
         json.put("to", deviceToken);
-
-        log.info("FirebaseService sendCallNotification(): JSON- " + json);
 
         HttpEntity<String> httpEntity = new HttpEntity<>(json.toString(), httpHeaders);
         String response = restTemplate.postForObject(Constant.FIREBASE_URL, httpEntity, String.class);
