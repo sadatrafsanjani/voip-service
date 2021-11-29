@@ -46,7 +46,6 @@ public class MeetingServiceImpl implements MeetingService {
     public JoinInfoResponse initiateCall(CallRequest callerRequest){
 
         log.info("MeetingService initiateCall(): Entry");
-
         callerRequest.setMeetingId(UUID.randomUUID().toString());
 
         CallRequest calleeRequest = CallRequest.builder()
@@ -149,15 +148,23 @@ public class MeetingServiceImpl implements MeetingService {
     @Override
     public void rejectCall(String receiverNo){
 
-        userService.getUserDevicesByPhoneNumber(receiverNo).forEach( device -> {
-            firebaseService.sendCallRejectNotification(device);
-        });
+        log.info("MeetingService rejectCall(): Entry");
+
+        userService.getUserDevicesByPhoneNumber(receiverNo).forEach( device ->
+                firebaseService.sendCallRejectNotification(device)
+        );
+
+        log.info("MeetingService rejectCall(): Exit");
     }
 
     private void sendCallNotification(JoinInfoResponse response, CallRequest request){
 
-        userService.getUserDevicesByPhoneNumber(request.getReceiverPhoneNo()).forEach( device -> {
-            firebaseService.sendCallNotification(response, device, request);
-        });
+        log.info("MeetingService sendCallNotification(): Entry");
+
+        userService.getUserDevicesByPhoneNumber(request.getReceiverPhoneNo()).forEach( device ->
+                firebaseService.sendCallNotification(response, device, request)
+        );
+
+        log.info("MeetingService sendCallNotification(): Exit");
     }
 }
