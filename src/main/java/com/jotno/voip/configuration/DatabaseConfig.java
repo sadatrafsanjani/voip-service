@@ -17,11 +17,6 @@ public class DatabaseConfig {
         dataSourceBuilder.username("root");
         dataSourceBuilder.password("");
 
-//        dataSourceBuilder.driverClassName("org.h2.Driver");
-//        dataSourceBuilder.url("jdbc:h2:mem:db_voip");
-//        dataSourceBuilder.username("sa");
-//        dataSourceBuilder.password("");
-
         return dataSourceBuilder.build();
     }
 }

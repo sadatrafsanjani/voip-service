@@ -57,7 +57,6 @@ public class FirebaseServiceImpl implements FirebaseService {
     public void sendCallRejectNotification(String deviceToken){
 
         log.info("FirebaseService sendCallRejectNotification(): Entry");
-
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Authorization", "key=" + Constant.FIREBASE_AUTHORIZATION_KEY);
