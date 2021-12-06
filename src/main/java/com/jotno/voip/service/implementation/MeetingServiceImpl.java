@@ -34,7 +34,7 @@ public class MeetingServiceImpl implements MeetingService {
         this.userService = userService;
         this.firebaseService = firebaseService;
         this.chimeClient = ChimeClient.builder()
-                .region(Region.US_EAST_1)
+                .region(Region.AWS_GLOBAL)
                 .credentialsProvider(() -> AwsBasicCredentials.create(
                         Constant.AWS_ACCESS_KEY_ID,
                         Constant.AW_SECRET_ACCESS_KEY
