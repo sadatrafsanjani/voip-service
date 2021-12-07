@@ -1,6 +1,8 @@
 package com.jotno.voip.service.implementation;
 
 import com.jotno.voip.dto.request.MessageRequest;
+import com.jotno.voip.dto.response.MessageResponse;
+import com.jotno.voip.dto.response.SendMessageResponse;
 import com.jotno.voip.service.abstraction.ChatService;
 import com.jotno.voip.utility.Constant;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +12,9 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.chime.ChimeClient;
 import software.amazon.awssdk.services.chime.model.*;
+import com.jotno.voip.utility.Formatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -17,7 +22,7 @@ import java.util.UUID;
 public class ChatServiceImpl implements ChatService {
 
     private ChimeClient chimeClient;
-    private String userArn;
+    private String doctorUserArn;
     private String channelArn;
 
     @Autowired
@@ -42,14 +47,14 @@ public class ChatServiceImpl implements ChatService {
     public String createChannel(){
 
         CreateAppInstanceUserRequest createAppInstanceUserRequest = CreateAppInstanceUserRequest.builder()
-                .appInstanceUserId("doctor-" + UUID.randomUUID())
+                .appInstanceUserId("doctor-101")
                 .appInstanceArn(Constant.AWS_APP_INSTANCE_ARN)
                 .name("DOCTOR")
                 .build();
 
         CreateAppInstanceUserResponse userResponse = chimeClient.createAppInstanceUser(createAppInstanceUserRequest);
-        userArn = userResponse.appInstanceUserArn();
-        log.info(userArn);
+        doctorUserArn = userResponse.appInstanceUserArn();
+        log.info(doctorUserArn);
 
         CreateChannelRequest createChannelRequest = CreateChannelRequest.builder()
                 .chimeBearer(userResponse.appInstanceUserArn())
@@ -83,7 +88,7 @@ public class ChatServiceImpl implements ChatService {
 
         CreateAppInstanceUserResponse userResponse = chimeClient.createAppInstanceUser(createAppInstanceUserRequest);
 
-        return userResponse.appInstanceUserArn();
+        return userResponse.toString();
     }
 
     /*
@@ -93,14 +98,12 @@ public class ChatServiceImpl implements ChatService {
      * Returns: Nothing
      * */
     @Override
-    public void addMemberToChannel(String memberArn){
+    public String addMemberToChannel(String memberArn){
 
         memberArn = Constant.AWS_PREFIX + "/user/" + memberArn;
 
-        //channelArn = "arn:aws:chime:us-east-1:252894276123:app-instance/2d40b42c-3b41-41d0-b409-ea94f01a6982/channel/60dae12bffd11de40321d101c3774a40393a9463c038aeca8bb5be2567c9231b";
-
         CreateChannelMembershipRequest request = CreateChannelMembershipRequest.builder()
-                .chimeBearer(userArn)
+                .chimeBearer(doctorUserArn)
                 .memberArn(memberArn)
                 .channelArn(channelArn)
                 .type("DEFAULT")
@@ -108,6 +111,8 @@ public class ChatServiceImpl implements ChatService {
 
         CreateChannelMembershipResponse response = chimeClient.createChannelMembership(request);
         log.info(response.toString());
+
+        return response.channelArn();
     }
 
 
@@ -118,26 +123,32 @@ public class ChatServiceImpl implements ChatService {
      * Returns: Nothing
      * */
     @Override
-    public void deleteChannel(String channelArn){
+    public String deleteChannel(String channelArn){
 
         channelArn = Constant.AWS_PREFIX + "/channel/" + channelArn;
 
         DeleteChannelRequest deleteChannelRequest = DeleteChannelRequest.builder()
-                .chimeBearer(userArn)
+                .chimeBearer(doctorUserArn)
                 .channelArn(channelArn)
                 .build();
 
         DeleteChannelResponse response = chimeClient.deleteChannel(deleteChannelRequest);
 
-        log.info(response.toString());
+        return response.toString();
     }
 
+    /*
+     *
+     * Send message to a specific channel
+     * Request: Message Request DTO
+     * Returns: Nothing
+     * */
     @Override
-    public void sendMessage(MessageRequest request){
+    public SendMessageResponse sendMessage(MessageRequest request){
 
         SendChannelMessageRequest sendChannelMessageRequest = SendChannelMessageRequest.builder()
-                .chimeBearer(userArn)
-                .channelArn(channelArn)
+                .chimeBearer(request.getUserArn())
+                .channelArn(request.getChannelArn())
                 .clientRequestToken(request.getClientRequestToken())
                 .content(request.getContent().trim())
                 .persistence(request.getPersistence())
@@ -145,6 +156,44 @@ public class ChatServiceImpl implements ChatService {
                 .build();
 
         SendChannelMessageResponse response = chimeClient.sendChannelMessage(sendChannelMessageRequest);
-        log.info(response.toString());
+
+        return SendMessageResponse.builder()
+                .messageId(response.messageId())
+                .channelArn(response.channelArn())
+                .build();
+    }
+
+    /*
+     *
+     * Lists out all messages from a channel
+     * Request: Channel Arn that we want to delete
+     * Returns: Response Object
+     * */
+    @Override
+    public List<MessageResponse> listMessages(String userArn, String channelArn){
+
+        List<MessageResponse> responses = new ArrayList<>();
+
+        String channel = Constant.AWS_PREFIX + "/channel/" + channelArn;
+        String requestUserArn = Constant.AWS_PREFIX + "/user/" + userArn;
+
+        ListChannelMessagesRequest listChannelMessagesRequest = ListChannelMessagesRequest.builder()
+                .chimeBearer(requestUserArn)
+                .channelArn(channel)
+                .build();
+
+        ListChannelMessagesResponse response = chimeClient.listChannelMessages(listChannelMessagesRequest);
+
+        response.channelMessages().forEach(summary ->
+            responses.add(MessageResponse.builder()
+                    .messageId(summary.messageId())
+                    .userArn(summary.sender().arn())
+                    .username(summary.sender().name())
+                    .content(summary.content())
+                    .createdTime(Formatter.formatInstant(summary.createdTimestamp()))
+                    .build())
+        );
+
+        return responses;
     }
 }

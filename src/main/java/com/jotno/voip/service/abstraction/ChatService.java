@@ -1,12 +1,16 @@
 package com.jotno.voip.service.abstraction;
 
 import com.jotno.voip.dto.request.MessageRequest;
+import com.jotno.voip.dto.response.MessageResponse;
+import com.jotno.voip.dto.response.SendMessageResponse;
+import java.util.List;
 
 public interface ChatService {
 
     String createChannel();
-    void deleteChannel(String channelArn);
+    String deleteChannel(String channelArn);
     String createMember();
-    void addMemberToChannel(String memberArn);
-    void sendMessage(MessageRequest request);
+    String addMemberToChannel(String memberArn);
+    SendMessageResponse sendMessage(MessageRequest request);
+    List<MessageResponse> listMessages(String userArn, String channelArn);
 }

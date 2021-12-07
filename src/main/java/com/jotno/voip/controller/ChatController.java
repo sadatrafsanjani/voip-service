@@ -5,6 +5,7 @@ import com.jotno.voip.dto.request.MessageRequest;
 import com.jotno.voip.service.abstraction.ChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,10 +21,10 @@ public class ChatController {
         this.chatService = chatService;
     }
 
-    @PostMapping
+    @PostMapping("/createChannel")
     public ResponseEntity<?> createChannel(){
 
-        return ResponseEntity.ok(chatService.createChannel());
+        return new ResponseEntity<>(chatService.createChannel(), HttpStatus.OK);
     }
 
     @DeleteMapping("/{channelArn}")
@@ -31,13 +32,13 @@ public class ChatController {
 
         chatService.deleteChannel(channelArn);
 
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(chatService.deleteChannel(channelArn), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/createMember")
     public ResponseEntity<?> createMember(){
 
-        return ResponseEntity.ok(chatService.createMember());
+        return new ResponseEntity<>(chatService.createMember(), HttpStatus.CREATED);
     }
 
     @PostMapping("/addMember")
@@ -45,14 +46,18 @@ public class ChatController {
 
         chatService.addMemberToChannel(request.getMemberArn());
 
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(chatService.addMemberToChannel(request.getMemberArn()), HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/sendMessage")
     public ResponseEntity<?> sendMessage(@RequestBody MessageRequest request){
 
-        chatService.sendMessage(request);
+        return new ResponseEntity<>(chatService.sendMessage(request), HttpStatus.OK);
+    }
 
-        return ResponseEntity.ok().build();
+    @GetMapping("/listMessages")
+    public ResponseEntity<?> listMessages(@RequestParam("userArn") String userArn, @RequestParam("channelArn") String channelArn){
+
+        return new ResponseEntity<>(chatService.listMessages(userArn, channelArn), HttpStatus.OK);
     }
 }

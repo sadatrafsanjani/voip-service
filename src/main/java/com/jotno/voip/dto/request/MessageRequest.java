@@ -11,6 +11,8 @@ import lombok.*;
 @Builder
 public class MessageRequest {
 
+    private String userArn;
+    private String channelArn;
     private String clientRequestToken;
     private String content;
     private String persistence = "PERSISTENT";
