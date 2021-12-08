@@ -15,6 +15,8 @@ public class MessageRequest {
     private String channelArn;
     private String clientRequestToken;
     private String content;
+    @Builder.Default
     private String persistence = "PERSISTENT";
+    @Builder.Default
     private String type = "STANDARD";
 }

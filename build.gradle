@@ -40,3 +40,11 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
+
+jar {
+	manifest {
+		attributes(
+				'Main-Class': 'com.jotno.voip.VoipServiceApplication'
+		)
+	}
+}

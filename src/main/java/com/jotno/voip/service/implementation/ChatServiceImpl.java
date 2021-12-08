@@ -4,6 +4,7 @@ import com.jotno.voip.dto.request.MessageRequest;
 import com.jotno.voip.dto.response.MessageResponse;
 import com.jotno.voip.dto.response.SendMessageResponse;
 import com.jotno.voip.service.abstraction.ChatService;
+import com.jotno.voip.service.abstraction.PatientService;
 import com.jotno.voip.utility.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,18 +16,20 @@ import software.amazon.awssdk.services.chime.model.*;
 import com.jotno.voip.utility.Formatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
 public class ChatServiceImpl implements ChatService {
 
+    private PatientService patientService;
     private ChimeClient chimeClient;
     private String doctorUserArn;
     private String channelArn;
 
     @Autowired
-    public ChatServiceImpl() {
+    public ChatServiceImpl(PatientService patientService) {
+
+        this.patientService = patientService;
 
         this.chimeClient = ChimeClient.builder()
                 .region(Region.AWS_GLOBAL)
@@ -87,8 +90,10 @@ public class ChatServiceImpl implements ChatService {
                 .build();
 
         CreateAppInstanceUserResponse userResponse = chimeClient.createAppInstanceUser(createAppInstanceUserRequest);
+        log.info("Patient Created: " + userResponse.appInstanceUserArn());
+        patientService.savePatient(userResponse.appInstanceUserArn());
 
-        return userResponse.toString();
+        return userResponse.appInstanceUserArn();
     }
 
     /*

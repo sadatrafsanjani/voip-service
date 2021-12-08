@@ -1,9 +1,6 @@
 package com.jotno.voip.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -13,6 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Patient {
 
     @Id
@@ -21,5 +19,5 @@ public class Patient {
     private long id;
 
     @Column(name = "USER_ARN")
-    private long userArn;
+    private String userArn;
 }

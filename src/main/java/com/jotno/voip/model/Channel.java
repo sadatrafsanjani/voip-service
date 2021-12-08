@@ -20,5 +20,5 @@ public class Channel {
     private long id;
 
     @Column(name = "CHANNEL_ARN")
-    private long channelArn;
+    private String channelArn;
 }
