@@ -30,8 +30,6 @@ public class ChatController {
     @DeleteMapping("/{channelArn}")
     public ResponseEntity<?> deleteChannel(@PathVariable("channelArn") String channelArn){
 
-        chatService.deleteChannel(channelArn);
-
         return new ResponseEntity<>(chatService.deleteChannel(channelArn), HttpStatus.NO_CONTENT);
     }
 
@@ -43,8 +41,6 @@ public class ChatController {
 
     @PostMapping("/addMember")
     public ResponseEntity<?> addMemberToChannel(@RequestBody MemberRequest request){
-
-        chatService.addMemberToChannel(request.getMemberArn());
 
         return new ResponseEntity<>(chatService.addMemberToChannel(request.getMemberArn()), HttpStatus.NO_CONTENT);
     }

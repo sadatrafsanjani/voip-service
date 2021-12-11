@@ -2,7 +2,9 @@ package com.jotno.voip.service.implementation;
 
 import com.jotno.voip.dto.request.MessageRequest;
 import com.jotno.voip.dto.response.MessageResponse;
+import com.jotno.voip.dto.response.PatientResponse;
 import com.jotno.voip.dto.response.SendMessageResponse;
+import com.jotno.voip.model.Patient;
 import com.jotno.voip.service.abstraction.ChatService;
 import com.jotno.voip.service.abstraction.PatientService;
 import com.jotno.voip.utility.Constant;
@@ -81,7 +83,7 @@ public class ChatServiceImpl implements ChatService {
      * Returns: Member ARN
      * */
     @Override
-    public String createMember(){
+    public PatientResponse createMember(){
 
         CreateAppInstanceUserRequest createAppInstanceUserRequest = CreateAppInstanceUserRequest.builder()
                 .appInstanceUserId("patient-101")
@@ -91,9 +93,8 @@ public class ChatServiceImpl implements ChatService {
 
         CreateAppInstanceUserResponse userResponse = chimeClient.createAppInstanceUser(createAppInstanceUserRequest);
         log.info("Patient Created: " + userResponse.appInstanceUserArn());
-        patientService.savePatient(userResponse.appInstanceUserArn());
 
-        return userResponse.appInstanceUserArn();
+        return  patientService.savePatient(userResponse.appInstanceUserArn());
     }
 
     /*
