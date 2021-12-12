@@ -1,12 +1,11 @@
 package com.jotno.voip.service.implementation;
 
 import com.jotno.voip.dto.request.MessageRequest;
+import com.jotno.voip.dto.response.ChannelResponse;
 import com.jotno.voip.dto.response.MessageResponse;
 import com.jotno.voip.dto.response.PatientResponse;
 import com.jotno.voip.dto.response.SendMessageResponse;
-import com.jotno.voip.model.Patient;
 import com.jotno.voip.service.abstraction.ChatService;
-import com.jotno.voip.service.abstraction.PatientService;
 import com.jotno.voip.utility.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,20 +17,18 @@ import software.amazon.awssdk.services.chime.model.*;
 import com.jotno.voip.utility.Formatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
 public class ChatServiceImpl implements ChatService {
 
-    private PatientService patientService;
     private ChimeClient chimeClient;
     private String doctorUserArn;
     private String channelArn;
 
     @Autowired
-    public ChatServiceImpl(PatientService patientService) {
-
-        this.patientService = patientService;
+    public ChatServiceImpl() {
 
         this.chimeClient = ChimeClient.builder()
                 .region(Region.AWS_GLOBAL)
@@ -86,15 +83,15 @@ public class ChatServiceImpl implements ChatService {
     public PatientResponse createMember(){
 
         CreateAppInstanceUserRequest createAppInstanceUserRequest = CreateAppInstanceUserRequest.builder()
-                .appInstanceUserId("patient-101")
+                .appInstanceUserId("patient-" + UUID.randomUUID())
                 .appInstanceArn(Constant.AWS_APP_INSTANCE_ARN)
-                .name("PATIENT-101")
+                .name("PATIENT")
                 .build();
 
         CreateAppInstanceUserResponse userResponse = chimeClient.createAppInstanceUser(createAppInstanceUserRequest);
         log.info("Patient Created: " + userResponse.appInstanceUserArn());
 
-        return  patientService.savePatient(userResponse.appInstanceUserArn());
+        return PatientResponse.builder().userArn(userResponse.appInstanceUserArn()).build();
     }
 
     /*
@@ -104,9 +101,9 @@ public class ChatServiceImpl implements ChatService {
      * Returns: Nothing
      * */
     @Override
-    public String addMemberToChannel(String memberArn){
+    public ChannelResponse addMemberToChannel(String memberArn){
 
-        memberArn = Constant.AWS_PREFIX + "/user/" + memberArn;
+        //memberArn = Constant.AWS_PREFIX + "/user/" + memberArn;
 
         CreateChannelMembershipRequest request = CreateChannelMembershipRequest.builder()
                 .chimeBearer(doctorUserArn)
@@ -118,7 +115,7 @@ public class ChatServiceImpl implements ChatService {
         CreateChannelMembershipResponse response = chimeClient.createChannelMembership(request);
         log.info(response.toString());
 
-        return response.channelArn();
+        return ChannelResponse.builder().channelArn(response.channelArn()).build();
     }
 
 

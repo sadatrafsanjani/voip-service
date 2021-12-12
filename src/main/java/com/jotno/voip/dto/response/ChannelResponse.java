@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class PatientResponse {
+public class ChannelResponse {
 
-    private String userArn;
+    private String channelArn;
 }
