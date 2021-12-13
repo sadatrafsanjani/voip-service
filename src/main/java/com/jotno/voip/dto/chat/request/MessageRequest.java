@@ -1,4 +1,4 @@
-package com.jotno.voip.dto.request;
+package com.jotno.voip.dto.chat.request;
 
 import lombok.*;
 

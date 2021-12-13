@@ -1,7 +1,7 @@
 package com.jotno.voip.service.domain;
 
-import com.jotno.voip.dto.response.AttendeeInfo;
-import com.jotno.voip.dto.response.AttendeeInfoResponse;
+import com.jotno.voip.dto.call.response.AttendeeInfo;
+import com.jotno.voip.dto.call.response.AttendeeInfoResponse;
 
 public class AttendeeInfoData {
 

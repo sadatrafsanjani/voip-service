@@ -1,4 +1,4 @@
-package com.jotno.voip.dto.response;
+package com.jotno.voip.dto.call.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -10,8 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class JoinInfoResponse {
+public class AttendeeInfoResponse {
 
-    @JsonProperty("JoinInfo")
-    private JoinInfo JoinInfo;
+    @JsonProperty("AttendeeInfo")
+    private AttendeeInfo attendeeInfo;
 }

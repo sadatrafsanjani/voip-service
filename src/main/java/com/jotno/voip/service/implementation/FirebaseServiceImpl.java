@@ -1,8 +1,8 @@
 package com.jotno.voip.service.implementation;
 
 import com.google.gson.Gson;
-import com.jotno.voip.dto.request.CallRequest;
-import com.jotno.voip.dto.response.JoinInfoResponse;
+import com.jotno.voip.dto.call.request.CallRequest;
+import com.jotno.voip.dto.call.response.JoinInfoResponse;
 import com.jotno.voip.service.abstraction.FirebaseService;
 import com.jotno.voip.utility.Constant;
 import lombok.extern.slf4j.Slf4j;

@@ -1,10 +1,10 @@
 package com.jotno.voip.service.implementation;
 
-import com.jotno.voip.dto.request.MessageRequest;
-import com.jotno.voip.dto.response.ChannelResponse;
-import com.jotno.voip.dto.response.MessageResponse;
-import com.jotno.voip.dto.response.PatientResponse;
-import com.jotno.voip.dto.response.SendMessageResponse;
+import com.jotno.voip.dto.chat.request.MessageRequest;
+import com.jotno.voip.dto.chat.response.ChannelResponse;
+import com.jotno.voip.dto.chat.response.MessageResponse;
+import com.jotno.voip.dto.chat.response.PatientResponse;
+import com.jotno.voip.dto.chat.response.SendMessageResponse;
 import com.jotno.voip.service.abstraction.ChatService;
 import com.jotno.voip.utility.Constant;
 import lombok.extern.slf4j.Slf4j;

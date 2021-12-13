@@ -1,9 +1,8 @@
 package com.jotno.voip.controller;
 
-import com.jotno.voip.dto.request.MemberRequest;
-import com.jotno.voip.dto.request.MessageRequest;
-import com.jotno.voip.dto.response.ChannelResponse;
-import com.jotno.voip.dto.response.PatientResponse;
+import com.jotno.voip.dto.chat.request.MemberRequest;
+import com.jotno.voip.dto.chat.request.MessageRequest;
+import com.jotno.voip.dto.chat.response.PatientResponse;
 import com.jotno.voip.service.abstraction.ChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

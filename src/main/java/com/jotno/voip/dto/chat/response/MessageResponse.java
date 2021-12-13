@@ -1,4 +1,4 @@
-package com.jotno.voip.dto.response;
+package com.jotno.voip.dto.chat.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

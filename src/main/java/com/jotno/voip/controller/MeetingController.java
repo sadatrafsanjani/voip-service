@@ -1,8 +1,8 @@
 package com.jotno.voip.controller;
 
-import com.jotno.voip.dto.request.CallRequest;
-import com.jotno.voip.dto.response.AttendeeInfoResponse;
-import com.jotno.voip.dto.response.JoinInfoResponse;
+import com.jotno.voip.dto.call.request.CallRequest;
+import com.jotno.voip.dto.call.response.AttendeeInfoResponse;
+import com.jotno.voip.dto.call.response.JoinInfoResponse;
 import com.jotno.voip.service.abstraction.MeetingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

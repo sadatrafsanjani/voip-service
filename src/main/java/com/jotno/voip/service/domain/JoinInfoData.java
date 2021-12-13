@@ -1,7 +1,7 @@
 package com.jotno.voip.service.domain;
 
-import com.jotno.voip.dto.response.JoinInfo;
-import com.jotno.voip.dto.response.JoinInfoResponse;
+import com.jotno.voip.dto.call.response.JoinInfo;
+import com.jotno.voip.dto.call.response.JoinInfoResponse;
 
 public class JoinInfoData {
 

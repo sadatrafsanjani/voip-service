@@ -1,4 +1,4 @@
-package com.jotno.voip.dto.request;
+package com.jotno.voip.dto.chat.request;
 
 import lombok.*;
 
@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Builder
-public class AppointmentRequest {
+public class MemberRequest {
 
-    private long userId;
+    private String memberArn;
 }

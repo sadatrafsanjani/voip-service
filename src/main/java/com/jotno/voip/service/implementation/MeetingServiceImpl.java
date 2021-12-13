@@ -1,7 +1,7 @@
 package com.jotno.voip.service.implementation;
 
-import com.jotno.voip.dto.request.CallRequest;
-import com.jotno.voip.dto.response.*;
+import com.jotno.voip.dto.call.request.CallRequest;
+import com.jotno.voip.dto.call.response.*;
 import com.jotno.voip.service.abstraction.FirebaseService;
 import com.jotno.voip.service.abstraction.MeetingService;
 import com.jotno.voip.service.abstraction.UserService;
