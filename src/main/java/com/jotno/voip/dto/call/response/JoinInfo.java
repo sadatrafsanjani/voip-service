@@ -18,5 +18,5 @@ public class JoinInfo {
     @JsonProperty("Meeting")
     private Map<String, Object> Meeting;
     @JsonProperty("Attendee")
-    private AttendeeResponse Attendee;
+    private Map<String, Object> Attendee;
 }

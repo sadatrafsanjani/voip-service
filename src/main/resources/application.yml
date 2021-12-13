@@ -6,5 +6,5 @@ server:
   port: 8080
 
 
-  #INSERT INTO db_voip.users (ID, USERNAME, EMAIL, PHONE) VALUES (8, 'faisal', 'faisal@jotno.net', '01670706699');
-  #INSERT INTO db_voip.devices (ID, USER_ID, DEVICE_TOKEN) VALUES (8, 8, 'dx-Pm2J_4KiDr25w1cY_N7:APA91bHkn28U6EjUpPk_tDfK0rGF4f4C4Cz-i17A6-9YX4flXAG4gARAwCBGGwzX8quiZJoCsQrOyiWwzHgEf7nKeGNC_wfsHSGd6b-ydErR7ULAOCLLgeQA6HXREyGF4SkmRo5bM2Kb');
+  #INSERT INTO db_voip.users (ID, USERNAME, EMAIL, PHONE) VALUES (9, 'tazul', 'tazul@jotno.net', '01825711955');
+  #INSERT INTO db_voip.devices (ID, USER_ID, DEVICE_TOKEN) VALUES (9, 9, 'dTE-AzJ8a0IxLCoAWdDNxr:APA91bFmm3aI4WvnaY_CzbEu1B9kRIGjDKb4CXYvOj5DtW8kKg7RfE6mrzjj-NJcJVXWsFW4hhZ8cQSm026_Ipp4WXwWvnAwawypr6OL3tCU24IBcKw2wZh2WKdFoCd2a9PzYRRNXZC9');

@@ -77,20 +77,19 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = chimeClient.createMeeting(meetingRequest).meeting();
         MediaPlacement mediaPlacement = meeting.mediaPlacement();
 
-        MediaPlacementResponse mediaPlacementResponse = MediaPlacementResponse.builder()
-                .AudioFallbackUrl(mediaPlacement.audioFallbackUrl())
-                .AudioHostUrl(mediaPlacement.audioHostUrl())
-                .ScreenDataUrl(mediaPlacement.screenDataUrl())
-                .ScreenSharingUrl(mediaPlacement.screenSharingUrl())
-                .ScreenViewingUrl(mediaPlacement.screenViewingUrl())
-                .SignalingUrl(mediaPlacement.signalingUrl())
-                .TurnControlUrl(mediaPlacement.turnControlUrl())
-                .build();
+        Map<String, Object> mediaPlacementMap = of(
+                "AudioFallbackUrl", mediaPlacement.audioFallbackUrl(),
+                "AudioHostUrl", mediaPlacement.audioHostUrl(),
+                "ScreenDataUrl", mediaPlacement.screenDataUrl(),
+                "ScreenSharingUrl", mediaPlacement.screenSharingUrl(),
+                "ScreenViewingUrl", mediaPlacement.screenViewingUrl(),
+                "SignalingUrl", mediaPlacement.signalingUrl(),
+                "TurnControlUrl", mediaPlacement.turnControlUrl());
 
         Map<String, Object> meetingData = of(
                 "MeetingId", meeting.meetingId(),
                 "MediaRegion", meeting.mediaRegion(),
-                "MediaPlacement", mediaPlacementResponse
+                "MediaPlacement", mediaPlacementMap
         );
 
         CreateAttendeeRequest attendeeRequest = CreateAttendeeRequest.builder()
@@ -102,16 +101,15 @@ public class MeetingServiceImpl implements MeetingService {
 
         attendees.put(request.getMeetingId(), of("attendeeId",attendee.attendeeId(), "attendeeName", request.getAttendeeName()));
 
-        AttendeeResponse attendeeData = AttendeeResponse.builder()
-                .AttendeeId(attendee.attendeeId())
-                .ExternalUserId(attendee.externalUserId())
-                .JoinToken(attendee.joinToken())
-                .build();
+        Map<String, Object> attendeeMap = of(
+                "AttendeeId", attendee.attendeeId(),
+                "ExternalUserId", attendee.externalUserId(),
+                "JoinToken", attendee.joinToken());
 
         JoinInfo joinInfo = JoinInfo.builder()
                 .Title(request.getMeetingId())
                 .Meeting(meetingData)
-                .Attendee(attendeeData)
+                .Attendee(attendeeMap)
                 .build();
 
         JoinInfoResponse response = JoinInfoData.toDto(joinInfo);
