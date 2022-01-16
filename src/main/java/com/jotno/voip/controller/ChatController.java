@@ -1,8 +1,7 @@
 package com.jotno.voip.controller;
 
-import com.jotno.voip.dto.chat.request.MemberRequest;
 import com.jotno.voip.dto.chat.request.MessageRequest;
-import com.jotno.voip.dto.chat.response.PatientResponse;
+import com.jotno.voip.dto.chat.response.RoomResponse;
 import com.jotno.voip.service.abstraction.ChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,24 +21,6 @@ public class ChatController {
         this.chatService = chatService;
     }
 
-    @PostMapping("/createChannel")
-    public ResponseEntity<?> createChannel(){
-
-        return new ResponseEntity<>(chatService.createChannel(), HttpStatus.OK);
-    }
-
-    @PostMapping("/createMember")
-    public ResponseEntity<?> createMember(){
-
-        return new ResponseEntity<>(chatService.createMember(), HttpStatus.CREATED);
-    }
-
-    @PostMapping("/addMember")
-    public ResponseEntity<?> addMemberToChannel(@RequestBody MemberRequest request){
-
-        return new ResponseEntity<>(chatService.addMemberToChannel(request.getMemberArn()), HttpStatus.NO_CONTENT);
-    }
-
     @PostMapping("/sendMessage")
     public ResponseEntity<?> sendMessage(@RequestBody MessageRequest request){
 
@@ -52,20 +33,15 @@ public class ChatController {
         return new ResponseEntity<>(chatService.listMessages(userArn, channelArn), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{channelArn}")
-    public ResponseEntity<?> deleteChannel(@PathVariable("channelArn") String channelArn){
+    @DeleteMapping
+    public ResponseEntity<?> deleteChannel(@RequestParam("channelArn") String channelArn){
 
         return new ResponseEntity<>(chatService.deleteChannel(channelArn), HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<?> testChat(){
+    @GetMapping("/create-room")
+    public ResponseEntity<RoomResponse> createRoom(){
 
-        String channel = chatService.createChannel();
-        PatientResponse patientResponse = chatService.createMember();
-        log.info(patientResponse.toString());
-        chatService.addMemberToChannel(patientResponse.getUserArn());
-
-        return new ResponseEntity<>(channel, HttpStatus.CREATED);
+        return new ResponseEntity<>(chatService.createRoom(), HttpStatus.CREATED);
     }
 }

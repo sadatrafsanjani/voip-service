@@ -1,10 +1,9 @@
 package com.jotno.voip.service.implementation;
 
 import com.jotno.voip.dto.chat.request.MessageRequest;
-import com.jotno.voip.dto.chat.response.ChannelResponse;
-import com.jotno.voip.dto.chat.response.MessageResponse;
-import com.jotno.voip.dto.chat.response.PatientResponse;
-import com.jotno.voip.dto.chat.response.SendMessageResponse;
+import com.jotno.voip.dto.chat.response.*;
+import com.jotno.voip.model.Room;
+import com.jotno.voip.repository.RoomRepository;
 import com.jotno.voip.service.abstraction.ChatService;
 import com.jotno.voip.utility.Constant;
 import lombok.extern.slf4j.Slf4j;
@@ -15,20 +14,26 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.chime.ChimeClient;
 import software.amazon.awssdk.services.chime.model.*;
 import com.jotno.voip.utility.Formatter;
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import static java.util.UUID.randomUUID;
 
 @Slf4j
 @Service
 public class ChatServiceImpl implements ChatService {
 
     private ChimeClient chimeClient;
-    private String doctorUserArn;
-    private String channelArn;
+    private RoomRepository roomRepository;
 
     @Autowired
-    public ChatServiceImpl() {
+    public ChatServiceImpl(RoomRepository roomRepository) {
+        this.roomRepository = roomRepository;
+    }
+
+    @PostConstruct
+    private void init(){
 
         this.chimeClient = ChimeClient.builder()
                 .region(Region.AWS_GLOBAL)
@@ -39,99 +44,66 @@ public class ChatServiceImpl implements ChatService {
                 .build();
     }
 
-    /*
-    *
-    * Create Channel
-    * Request: Nothing
-    * Returns: Channel ARN
-    * */
-    @Override
-    public String createChannel(){
+    private String createDoctor(String doctorName){
 
         CreateAppInstanceUserRequest createAppInstanceUserRequest = CreateAppInstanceUserRequest.builder()
-                .appInstanceUserId("doctor-101")
+                .appInstanceUserId("Doctor-101")
                 .appInstanceArn(Constant.AWS_APP_INSTANCE_ARN)
-                .name("DOCTOR")
+                .name(doctorName)
                 .build();
 
-        CreateAppInstanceUserResponse userResponse = chimeClient.createAppInstanceUser(createAppInstanceUserRequest);
-        doctorUserArn = userResponse.appInstanceUserArn();
-        log.info(doctorUserArn);
+        CreateAppInstanceUserResponse doctorResponse = chimeClient.createAppInstanceUser(createAppInstanceUserRequest);
+
+        return doctorResponse.appInstanceUserArn();
+    }
+
+
+    private String createPatient(String patientName){
+
+        CreateAppInstanceUserRequest createAppInstanceUserRequest = CreateAppInstanceUserRequest.builder()
+                .appInstanceUserId("Patient-" + randomUUID())
+                .appInstanceArn(Constant.AWS_APP_INSTANCE_ARN)
+                .name(patientName)
+                .build();
+
+        CreateAppInstanceUserResponse patientResponse = chimeClient.createAppInstanceUser(createAppInstanceUserRequest);
+
+        return patientResponse.appInstanceUserArn();
+    }
+
+    private String createChannel(String channelCreatorArn, String clientRequestToken){
 
         CreateChannelRequest createChannelRequest = CreateChannelRequest.builder()
-                .chimeBearer(userResponse.appInstanceUserArn())
+                .chimeBearer(channelCreatorArn)
                 .appInstanceArn(Constant.AWS_APP_INSTANCE_ARN)
-                .clientRequestToken("jotno-web-client")
+                .clientRequestToken("CLIENT-REQUEST-TOKEN-" + clientRequestToken)
                 .mode("UNRESTRICTED")
-                .name("appointment-101")
+                .name("CHANNEL-" + clientRequestToken)
                 .privacy("PRIVATE")
                 .build();
 
-        CreateChannelResponse response = chimeClient.createChannel(createChannelRequest);
-        channelArn = response.channelArn();
+        CreateChannelResponse channelResponse = chimeClient.createChannel(createChannelRequest);
 
-        return response.channelArn();
+        return channelResponse.channelArn();
     }
 
-    /*
-     *
-     * Create a user for channel communication
-     * Request: Nothing
-     * Returns: Member ARN
-     * */
-    @Override
-    public PatientResponse createMember(){
-
-        CreateAppInstanceUserRequest createAppInstanceUserRequest = CreateAppInstanceUserRequest.builder()
-                .appInstanceUserId("patient-" + UUID.randomUUID())
-                .appInstanceArn(Constant.AWS_APP_INSTANCE_ARN)
-                .name("PATIENT")
-                .build();
-
-        CreateAppInstanceUserResponse userResponse = chimeClient.createAppInstanceUser(createAppInstanceUserRequest);
-        log.info("Patient Created: " + userResponse.appInstanceUserArn());
-
-        return PatientResponse.builder().userArn(userResponse.appInstanceUserArn()).build();
-    }
-
-    /*
-     *
-     * Add member to a channel
-     * Request: Member Arn of the user whom we want to add to a channel
-     * Returns: Nothing
-     * */
-    @Override
-    public ChannelResponse addMemberToChannel(String memberArn){
-
-        //memberArn = Constant.AWS_PREFIX + "/user/" + memberArn;
+    private void addMemberToChannel(String doctorArn, String patientArn, String channelArn){
 
         CreateChannelMembershipRequest request = CreateChannelMembershipRequest.builder()
-                .chimeBearer(doctorUserArn)
-                .memberArn(memberArn)
+                .chimeBearer(doctorArn)
+                .memberArn(patientArn)
                 .channelArn(channelArn)
                 .type("DEFAULT")
                 .build();
 
-        CreateChannelMembershipResponse response = chimeClient.createChannelMembership(request);
-        log.info(response.toString());
-
-        return ChannelResponse.builder().channelArn(response.channelArn()).build();
+        chimeClient.createChannelMembership(request);
     }
 
-
-    /*
-     *
-     * Delete a created channel
-     * Request: Channel Arn that we want to delete
-     * Returns: Nothing
-     * */
     @Override
     public String deleteChannel(String channelArn){
 
-        channelArn = Constant.AWS_PREFIX + "/channel/" + channelArn;
-
         DeleteChannelRequest deleteChannelRequest = DeleteChannelRequest.builder()
-                .chimeBearer(doctorUserArn)
+                .chimeBearer("arn:aws:chime:us-east-1:252894276123:app-instance/2d40b42c-3b41-41d0-b409-ea94f01a6982/user/Doctor-101")
                 .channelArn(channelArn)
                 .build();
 
@@ -140,22 +112,16 @@ public class ChatServiceImpl implements ChatService {
         return response.toString();
     }
 
-    /*
-     *
-     * Send message to a specific channel
-     * Request: Message Request DTO
-     * Returns: Nothing
-     * */
     @Override
     public SendMessageResponse sendMessage(MessageRequest request){
 
         SendChannelMessageRequest sendChannelMessageRequest = SendChannelMessageRequest.builder()
-                .chimeBearer(request.getUserArn())
+                .chimeBearer(request.getUserArn())// Doctor arn who created the channel
                 .channelArn(request.getChannelArn())
                 .clientRequestToken(request.getClientRequestToken())
                 .content(request.getContent().trim())
-                .persistence(request.getPersistence())
-                .type(request.getType())
+                .persistence("PERSISTENT")
+                .type("STANDARD")
                 .build();
 
         SendChannelMessageResponse response = chimeClient.sendChannelMessage(sendChannelMessageRequest);
@@ -166,28 +132,17 @@ public class ChatServiceImpl implements ChatService {
                 .build();
     }
 
-    /*
-     *
-     * Lists out all messages from a channel
-     * Request: Channel Arn that we want to delete
-     * Returns: Response Object
-     * */
     @Override
     public List<MessageResponse> listMessages(String userArn, String channelArn){
 
         List<MessageResponse> responses = new ArrayList<>();
 
-        String channel = Constant.AWS_PREFIX + "/channel/" + channelArn;
-        String requestUserArn = Constant.AWS_PREFIX + "/user/" + userArn;
-
         ListChannelMessagesRequest listChannelMessagesRequest = ListChannelMessagesRequest.builder()
-                .chimeBearer(requestUserArn)
-                .channelArn(channel)
+                .chimeBearer(userArn)
+                .channelArn(channelArn)
                 .build();
 
-        ListChannelMessagesResponse response = chimeClient.listChannelMessages(listChannelMessagesRequest);
-
-        response.channelMessages().forEach(summary ->
+        chimeClient.listChannelMessages(listChannelMessagesRequest).channelMessages().forEach(summary ->
             responses.add(MessageResponse.builder()
                     .messageId(summary.messageId())
                     .userArn(summary.sender().arn())
@@ -198,5 +153,35 @@ public class ChatServiceImpl implements ChatService {
         );
 
         return responses;
+    }
+
+    @Override
+    public RoomResponse createRoom(){
+
+        String doctor = createDoctor("Rene");
+        String patient = createPatient("Ada");
+        String token = UUID.randomUUID().toString();
+        String channel = createChannel(doctor, token);
+
+        addMemberToChannel(doctor,patient,channel);
+
+        Room room = Room.builder()
+                .channelArn(channel)
+                .clientRequestToken("CLIENT-REQUEST-TOKEN-" + token)
+                .doctorArn(doctor)
+                .patientArn(patient)
+                .build();
+
+        return modelToDto(roomRepository.save(room));
+    }
+
+    private RoomResponse modelToDto(Room room){
+
+        return RoomResponse.builder()
+                .id(room.getId())
+                .channelArn(room.getChannelArn())
+                .doctorArn(room.getDoctorArn())
+                .patientArn(room.getPatientArn())
+                .build();
     }
 }

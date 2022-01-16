@@ -56,6 +56,8 @@ public class MeetingServiceImpl implements MeetingService {
         JoinInfoResponse callerResponse = generateMeetingSession(callerRequest);
         JoinInfoResponse calleeResponse = generateMeetingSession(calleeRequest);
 
+        log.info("Meeting Id: " + calleeResponse.getJoinInfo().getMeeting().get("MeetingId"));
+
         if(callerResponse != null){
             sendCallNotification(calleeResponse, callerRequest);
             log.info("MeetingService initiateCall(): Call notification sent");
@@ -64,6 +66,17 @@ public class MeetingServiceImpl implements MeetingService {
         log.info("MeetingService initiateCall(): Exit");
 
         return callerResponse;
+    }
+
+    private void sendCallNotification(JoinInfoResponse response, CallRequest request){
+
+        log.info("MeetingService sendCallNotification(): Entry");
+
+        userService.getUserDevicesByPhoneNumber(request.getReceiverPhoneNo()).forEach( device ->
+                firebaseService.sendCallNotification(response, device, request)
+        );
+
+        log.info("MeetingService sendCallNotification(): Exit");
     }
 
     private JoinInfoResponse generateMeetingSession(CallRequest request){
@@ -153,16 +166,5 @@ public class MeetingServiceImpl implements MeetingService {
         );
 
         log.info("MeetingService rejectCall(): Exit");
-    }
-
-    private void sendCallNotification(JoinInfoResponse response, CallRequest request){
-
-        log.info("MeetingService sendCallNotification(): Entry");
-
-        userService.getUserDevicesByPhoneNumber(request.getReceiverPhoneNo()).forEach( device ->
-                firebaseService.sendCallNotification(response, device, request)
-        );
-
-        log.info("MeetingService sendCallNotification(): Exit");
     }
 }

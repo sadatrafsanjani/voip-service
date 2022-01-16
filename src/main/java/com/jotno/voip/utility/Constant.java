@@ -14,6 +14,5 @@ public class Constant {
 
     public static final String AWS_PREFIX = "arn:aws:chime:us-east-1:252894276123:app-instance/2d40b42c-3b41-41d0-b409-ea94f01a6982";
 
-    public static final String AWS_CHIME_BEARER = "arn:aws:chime:us-east-1:252894276123:app-instance/2d40b42c-3b41-41d0-b409-ea94f01a6982/user/jotno_doctor";
     public static final String AWS_APP_INSTANCE_ARN = AWS_PREFIX;
 }
