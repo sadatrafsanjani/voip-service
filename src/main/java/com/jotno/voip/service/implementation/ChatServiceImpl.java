@@ -47,7 +47,7 @@ public class ChatServiceImpl implements ChatService {
     private String createDoctor(String doctorName){
 
         CreateAppInstanceUserRequest createAppInstanceUserRequest = CreateAppInstanceUserRequest.builder()
-                .appInstanceUserId("Doctor-101")
+                .appInstanceUserId(doctorName)
                 .appInstanceArn(Constant.AWS_APP_INSTANCE_ARN)
                 .name(doctorName)
                 .build();
@@ -71,14 +71,16 @@ public class ChatServiceImpl implements ChatService {
         return patientResponse.appInstanceUserArn();
     }
 
-    private String createChannel(String channelCreatorArn, String clientRequestToken){
+    private String createChannel(String channelCreatorArn){
+
+        String token = UUID.randomUUID().toString();
 
         CreateChannelRequest createChannelRequest = CreateChannelRequest.builder()
                 .chimeBearer(channelCreatorArn)
                 .appInstanceArn(Constant.AWS_APP_INSTANCE_ARN)
-                .clientRequestToken("CLIENT-REQUEST-TOKEN-" + clientRequestToken)
+                .clientRequestToken(token)
                 .mode("UNRESTRICTED")
-                .name("CHANNEL-" + clientRequestToken)
+                .name("CHANNEL-" + token)
                 .privacy("PRIVATE")
                 .build();
 
@@ -100,10 +102,10 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public String deleteChannel(String channelArn){
+    public String deleteChannel(String channelArn, String creatorArn){
 
         DeleteChannelRequest deleteChannelRequest = DeleteChannelRequest.builder()
-                .chimeBearer("arn:aws:chime:us-east-1:252894276123:app-instance/2d40b42c-3b41-41d0-b409-ea94f01a6982/user/Doctor-101")
+                .chimeBearer(creatorArn)
                 .channelArn(channelArn)
                 .build();
 
@@ -116,9 +118,9 @@ public class ChatServiceImpl implements ChatService {
     public SendMessageResponse sendMessage(MessageRequest request){
 
         SendChannelMessageRequest sendChannelMessageRequest = SendChannelMessageRequest.builder()
-                .chimeBearer(request.getUserArn())// Doctor arn who created the channel
+                .chimeBearer(request.getUserArn())
                 .channelArn(request.getChannelArn())
-                .clientRequestToken(request.getClientRequestToken())
+                .clientRequestToken(UUID.randomUUID().toString())
                 .content(request.getContent().trim())
                 .persistence("PERSISTENT")
                 .type("STANDARD")
@@ -158,16 +160,14 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public RoomResponse createRoom(){
 
-        String doctor = createDoctor("Rene");
-        String patient = createPatient("Ada");
-        String token = UUID.randomUUID().toString();
-        String channel = createChannel(doctor, token);
+        String doctor = createDoctor("Doctor-Marcos");
+        String patient = createPatient("Patient-Xander Cage");
+        String channel = createChannel(doctor);
 
-        addMemberToChannel(doctor,patient,channel);
+        addMemberToChannel(doctor, patient, channel);
 
         Room room = Room.builder()
                 .channelArn(channel)
-                .clientRequestToken("CLIENT-REQUEST-TOKEN-" + token)
                 .doctorArn(doctor)
                 .patientArn(patient)
                 .build();
@@ -183,5 +183,10 @@ public class ChatServiceImpl implements ChatService {
                 .doctorArn(room.getDoctorArn())
                 .patientArn(room.getPatientArn())
                 .build();
+    }
+
+    public RoomResponse getRoomById(long id){
+
+        return modelToDto(roomRepository.getById(id));
     }
 }

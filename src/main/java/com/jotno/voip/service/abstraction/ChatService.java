@@ -9,5 +9,6 @@ public interface ChatService {
     SendMessageResponse sendMessage(MessageRequest request);
     List<MessageResponse> listMessages(String userArn, String channelArn);
     RoomResponse createRoom();
-    String deleteChannel(String channelArn);
+    String deleteChannel(String channelArn, String creatorArn);
+    RoomResponse getRoomById(long id);
 }

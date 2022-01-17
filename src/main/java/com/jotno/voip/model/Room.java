@@ -20,9 +20,6 @@ public class Room {
     @Column(name="CHANNEL_ARN")
     private String channelArn;
 
-    @Column(name="CLIENT_REQUEST_TOKEN")
-    private String clientRequestToken;
-
     @Column(name="DOCTOR_ARN")
     private String doctorArn;
 
