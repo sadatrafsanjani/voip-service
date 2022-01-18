@@ -14,5 +14,7 @@ public class RoomResponse {
     private Long id;
     private String channelArn;
     private String doctorArn;
+    private String doctorName;
     private String patientArn;
+    private String patientName;
 }

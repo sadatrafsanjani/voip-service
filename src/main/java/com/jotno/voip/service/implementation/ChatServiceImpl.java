@@ -72,9 +72,7 @@ public class ChatServiceImpl implements ChatService {
         return patientResponse.appInstanceUserArn();
     }
 
-    private String createChannel(String channelCreatorArn){
-
-        String token = UUID.randomUUID().toString();
+    private String createChannel(String channelCreatorArn, String token){
 
         CreateChannelRequest createChannelRequest = CreateChannelRequest.builder()
                 .chimeBearer(channelCreatorArn)
@@ -161,16 +159,19 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public RoomResponse createRoom(){
 
-        String doctor = createDoctor("Doctor-" + UUID.randomUUID());
-        String patient = createPatient("Patient-" + UUID.randomUUID());
-        String channel = createChannel(doctor);
+        String token = String.valueOf(UUID.randomUUID()).substring(0,7);
+        String doctor = createDoctor("Doctor-" + token);
+        String patient = createPatient("Patient-" + token);
+        String channel = createChannel(doctor, token);
 
         addMemberToChannel(doctor, patient, channel);
 
         Room room = Room.builder()
                 .channelArn(channel)
+                .doctorName("Doctor-" + token)
                 .doctorArn(doctor)
                 .patientArn(patient)
+                .patientName("Patient-" + token)
                 .build();
 
         return modelToDto(roomRepository.save(room));
@@ -181,8 +182,10 @@ public class ChatServiceImpl implements ChatService {
         return RoomResponse.builder()
                 .id(room.getId())
                 .channelArn(room.getChannelArn())
+                .doctorName(room.getDoctorName())
                 .doctorArn(room.getDoctorArn())
                 .patientArn(room.getPatientArn())
+                .patientName(room.getPatientName())
                 .build();
     }
 

@@ -23,6 +23,12 @@ public class Room {
     @Column(name="DOCTOR_ARN")
     private String doctorArn;
 
+    @Column(name="DOCTOR_NAME")
+    private String doctorName;
+
     @Column(name="PATIENT_ARN")
     private String patientArn;
+
+    @Column(name="PATIENT_NAME")
+    private String patientName;
 }
