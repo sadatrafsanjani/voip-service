@@ -11,4 +11,5 @@ public interface ChatService {
     RoomResponse createRoom();
     String deleteChannel(String channelArn, String creatorArn);
     RoomResponse getRoomById(long id);
+    List<RoomResponse> getRooms();
 }

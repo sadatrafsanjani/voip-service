@@ -18,6 +18,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import static java.util.UUID.randomUUID;
 
 @Slf4j
@@ -160,8 +161,8 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public RoomResponse createRoom(){
 
-        String doctor = createDoctor("Doctor-Marcos");
-        String patient = createPatient("Patient-Xander Cage");
+        String doctor = createDoctor("Doctor-" + UUID.randomUUID());
+        String patient = createPatient("Patient-" + UUID.randomUUID());
         String channel = createChannel(doctor);
 
         addMemberToChannel(doctor, patient, channel);
@@ -185,6 +186,14 @@ public class ChatServiceImpl implements ChatService {
                 .build();
     }
 
+    @Override
+    public List<RoomResponse> getRooms(){
+
+        return roomRepository.findAll().stream().map(room -> modelToDto(room))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public RoomResponse getRoomById(long id){
 
         return modelToDto(roomRepository.getById(id));

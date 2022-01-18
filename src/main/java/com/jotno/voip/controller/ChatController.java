@@ -53,4 +53,10 @@ public class ChatController {
 
         return new ResponseEntity<>(chatService.getRoomById(id), HttpStatus.CREATED);
     }
+
+    @GetMapping("/rooms")
+    public ResponseEntity<List<RoomResponse>> getRooms(){
+
+        return new ResponseEntity<>(chatService.getRooms(), HttpStatus.CREATED);
+    }
 }
