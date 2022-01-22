@@ -119,6 +119,7 @@ public class MeetingServiceImpl implements MeetingService {
                 "ExternalUserId", attendee.externalUserId(),
                 "JoinToken", attendee.joinToken());
 
+
         JoinInfo joinInfo = JoinInfo.builder()
                 .Title(request.getMeetingId())
                 .Meeting(meetingData)
@@ -126,6 +127,8 @@ public class MeetingServiceImpl implements MeetingService {
                 .build();
 
         JoinInfoResponse response = JoinInfoData.toDto(joinInfo);
+
+        log.info("Response: " + response);
 
         log.info("MeetingService generateMeetingSession(): Success- Exit");
 

@@ -4,6 +4,7 @@ import com.jotno.voip.dto.chat.request.MessageRequest;
 import com.jotno.voip.dto.chat.response.MessageResponse;
 import com.jotno.voip.dto.chat.response.RoomResponse;
 import com.jotno.voip.dto.chat.response.SendMessageResponse;
+import com.jotno.voip.dto.chat.response.UserResponse;
 import com.jotno.voip.service.abstraction.ChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,5 +59,11 @@ public class ChatController {
     public ResponseEntity<List<RoomResponse>> getRooms(){
 
         return new ResponseEntity<>(chatService.getRooms(), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<UserResponse> getUser(@RequestParam("id") long id, @RequestParam("user") String user){
+
+        return new ResponseEntity<>(chatService.getUserById(id, user), HttpStatus.OK);
     }
 }

@@ -197,6 +197,23 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    public UserResponse getUserById(long id, String user){
+
+        Room room = roomRepository.getById(id);
+        UserResponse response = new UserResponse();
+        response.setChannelArn(room.getChannelArn());
+
+        if(user.equalsIgnoreCase("doctor")){
+            response.setUserArn(room.getDoctorArn());
+        }
+        else{
+            response.setUserArn(room.getPatientArn());
+        }
+
+        return response;
+    }
+
+    @Override
     public RoomResponse getRoomById(long id){
 
         return modelToDto(roomRepository.getById(id));
